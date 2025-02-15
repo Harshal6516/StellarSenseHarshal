@@ -93,38 +93,136 @@ const App = () => {
         <h1>User Details Form</h1>
         <form onSubmit={handleSubmit} className="form-container">
           <div className="grid-container">
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter Name"
-              required
-            />
-            <input
-              type="number"
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              placeholder="Enter Age"
-              required
-            />
-            <input
-              type="text"
-              name="regno"
-              value={formData.regno}
-              onChange={handleChange}
-              placeholder="Enter Reg No"
-              required
-            />
-            <input
-              type="text"
-              name="phone_no"
-              value={formData.phone_no}
-              onChange={handleChange}
-              placeholder="Enter Phone No"
-              required
-            />
+            <div className="inputs-grid">
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter Name"
+                required
+              />
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={handleChange}
+                placeholder="Enter Age"
+                required
+              />
+              <input
+                type="text"
+                name="regno"
+                value={formData.regno}
+                onChange={handleChange}
+                placeholder="Enter Reg No"
+                required
+              />
+              <input
+                type="text"
+                name="phone_no"
+                value={formData.phone_no}
+                onChange={handleChange}
+                placeholder="Enter Phone No"
+                required
+              />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter Name"
+                required
+              />
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={handleChange}
+                placeholder="Enter Age"
+                required
+              />
+              <input
+                type="text"
+                name="regno"
+                value={formData.regno}
+                onChange={handleChange}
+                placeholder="Enter Reg No"
+                required
+              />
+              <input
+                type="text"
+                name="phone_no"
+                value={formData.phone_no}
+                onChange={handleChange}
+                placeholder="Enter Phone No"
+                required
+              />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter Name"
+                required
+              />
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={handleChange}
+                placeholder="Enter Age"
+                required
+              />
+              <input
+                type="text"
+                name="regno"
+                value={formData.regno}
+                onChange={handleChange}
+                placeholder="Enter Reg No"
+                required
+              />
+              <input
+                type="text"
+                name="phone_no"
+                value={formData.phone_no}
+                onChange={handleChange}
+                placeholder="Enter Phone No"
+                required
+              />
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter Name"
+                required
+              />
+              <input
+                type="number"
+                name="age"
+                value={formData.age}
+                onChange={handleChange}
+                placeholder="Enter Age"
+                required
+              />
+              <input
+                type="text"
+                name="regno"
+                value={formData.regno}
+                onChange={handleChange}
+                placeholder="Enter Reg No"
+                required
+              />
+              <input
+                type="text"
+                name="phone_no"
+                value={formData.phone_no}
+                onChange={handleChange}
+                placeholder="Enter Phone No"
+                required
+              />
+            </div>
           </div>
           <button type="submit">Generate Markdown</button>
         </form>
