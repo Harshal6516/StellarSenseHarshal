@@ -1,51 +1,63 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+import os
+import cv2  # Example: Using OpenCV for processing
+import torch  # Example: Using PyTorch for an ML model
+from flask_cors import CORS  # Import CORS
 
-app = Flask(__name__)
-CORS(app)  # Allow requests from React
+app = Flask(__name__)  # Only one instance
+CORS(app)  # Enable CORS for all routes
 
-def generate_markdown(name, age, regno, phone_no):
-    content = f"""# User Details
+# Get the directory where this script is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-#Name: {name}
-#Age: {age}
-#Reg No: {regno}
-#Phone No: {phone_no}
-"""
+# Create an "img" folder inside the same directory as this Python file
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "img")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
+
+@app.route("/upload-image", methods=["POST"])
+def upload_image():
+    if "image" not in request.files:
+        return jsonify({"error": "No image uploaded"}), 400
     
-    with open("user_details.md", "w") as file:
-        file.write(content)
-    
-    return "user_details.md"
+    image = request.files["image"]
+    image_path = os.path.join(UPLOAD_FOLDER, image.filename)
+    image.save(image_path)  # Save image in "img" folder
 
-# API to process form data and generate markdown
-@app.route('/generate-markdown', methods=['POST'])
-def generate():
+    # Pass image to the model
+    result = process_image(image_path)
+
+    return jsonify({"message": "Image uploaded successfully", "image_path": image_path, "model_result": result})
+
+def process_image(image_path):
+    """ Example: Load image & pass it to a deep learning model """
+    img = cv2.imread(image_path)  # Load image
+    # Example: Convert image to tensor for a PyTorch model
+    tensor_img = torch.tensor(img).float().unsqueeze(0)  # Modify as per your model
+    # Example: Fake model output (Replace with actual model prediction)
+    model_output = {"prediction": "Galaxy Detected", "confidence": 0.95}
+    return model_output
+
+# ✅ New endpoint to generate Markdown from form data
+@app.route("/generate-markdown", methods=["POST"])
+def generate_markdown():
     try:
-        data = request.json
-        name = data.get('name')
-        age = data.get('age')
-        regno = data.get('regno')
-        phone_no = data.get('phone_no')
+        data = request.json  # Get JSON data from React frontend
+        if not data:
+            return jsonify({"error": "No data received"}), 400
+        
+        print("Received Data:", data)  # Debugging Log in Flask Console
 
-        # Generate the markdown file
-        markdown_file = generate_markdown(name, age, regno, phone_no)
+        # Convert form data to Markdown format
+        markdown_content = "## Generated Markdown\n\n"
+        for key, value in data.items():
+            markdown_content += f"#: {value}\n\n"
 
-        return jsonify({"file_path": markdown_file})
+        print("Generated Markdown:", markdown_content)  # Debugging Log in Flask Console
+        return jsonify({"markdown": markdown_content})  # Return Markdown content
 
     except Exception as e:
+        print("Error in /generate-markdown:", str(e))  # Debugging Log in Flask Console
         return jsonify({"error": str(e)}), 500
 
-# API to fetch markdown content
-@app.route('/get-markdown', methods=['GET'])
-def get_markdown():
-    try:
-        with open("user_details.md", "r") as file:
-            content = file.read()
-        return jsonify({"markdown": content})
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

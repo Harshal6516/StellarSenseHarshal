@@ -4,28 +4,22 @@ import "./App.css";
 
 const App = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    regno: "",
-    phone_no: "",
-    gag: "",
-    abc: "",
-    def: "",
-    ghi:"",
-    jkl:"",
-    adn:"",
-    ajdfn:"",
-    ansdjn:"",
-    klko:"",
-    kmksdm:"",
-    dmfk:"",
-    kmdkm:"",
-    
+    U_Filter: "",
+    G_Filter: "",
+    R_Filter: "",
+    I_Filter: "",
+    Z_Filter: "",
+    GR_Color: "",
+    RI_color: "",
+    UG_Color: "",
+    PetroR50_R: "",
+    PetroR90_R: "",
+
   });
 
+  const [particles, setParticles] = useState(createParticles());
   const [markdown, setMarkdown] = useState("");
   const [image, setImage] = useState(null);
-  const [particles, setParticles] = useState(createParticles());
 
   function createParticles() {
     return Array.from({ length: 50 }, (_, i) => ({
@@ -59,44 +53,82 @@ const App = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleGenerateMarkdown = async (e) => {
     e.preventDefault();
     try {
+      console.log("Sending data to backend:", formData); // Debugging log
+  
       const response = await fetch("http://127.0.0.1:5000/generate-markdown", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+  
       const data = await response.json();
-      console.log("Markdown file generated:", data.file_path);
-      fetchMarkdown();
+      console.log("Received response:", data); // Debugging log
+  
+      if (response.ok) {
+        setMarkdown(data.markdown);
+      } else {
+        console.error("Error:", data.error);
+      }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Request Failed:", error);
     }
   };
+  
+  
 
   const fetchMarkdown = async () => {
     try {
       const response = await fetch("http://127.0.0.1:5000/get-markdown");
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
       const data = await response.json();
       setMarkdown(data.markdown);
     } catch (error) {
       console.error("Error fetching markdown:", error);
     }
   };
-
-  const handleImageChange = (e) => {
+  
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
+  
+      // Send image to backend
+      const formData = new FormData();
+      formData.append("image", file);
+  
+      try {
+        const response = await fetch("http://127.0.0.1:5000/upload-image", {
+          method: "POST",
+          body: formData,
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        console.log("Model Output:", data.model_result); // Debugging
+        alert(`Prediction: ${data.model_result.prediction}, Confidence: ${data.model_result.confidence}`);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
   };
   
+
   return (
-    
-    <div class="abc">
-      <h1><span id='stellar'>STELLAR</span>SENSE</h1>
+    <div className="abc">
+      <h1>
+        <span id="stellar">STELLAR</span>SENSE
+      </h1>
+
+      {/* Particles Background */}
       <div className="particles-container">
         {particles.map((particle) => (
           <div
@@ -111,49 +143,42 @@ const App = () => {
             }}
           />
         ))}
-        
       </div>
-      
-      
+
+      {/* Uploaded Image Positioned at Middle Right */}
+      {image && (
+        <div className="uploaded-image-container">
+          <img src={image} alt="Uploaded preview" className="uploaded-image" />
+        </div>
+      )}
 
       <div className="content-container">
         <h2>User Details Form</h2>
-        <div className="form-image-container">
-          <form onSubmit={handleSubmit} className="form-container">
-            <div className="grid-container">
-              <div className="inputs-grid">
-                {Object.keys(formData).map((key) => (
-                  <div className="input-field" key={key}>
-                    <label htmlFor={key}>{key.toUpperCase()}</label>
-                    <input
-                      type={key === "age" ? "number" : "text"}
-                      id={key}
-                      name={key}
-                      value={formData[key]}
-                      onChange={handleChange}
-                      placeholder={`Enter ${key}`}
-                      required
-                    />
-                  </div>
-                ))}
+        <form onSubmit={handleGenerateMarkdown}>
+          <div className="inputs-grid">
+            {Object.keys(formData).map((key) => (
+              <div key={key} className="input-field">
+                <label htmlFor={key}>{key.toUpperCase()}</label>
+                <input
+                  id={key}
+                  name={key}
+                  value={formData[key]}
+                  onChange={handleChange}
+                  placeholder={`Enter ${key}`}
+                  required
+                />
               </div>
-            </div>
+            ))}
+          </div>
+          <div className="upload-container">
             <input type="file" accept="image/*" onChange={handleImageChange} className="upload-button" />
-            
-          </form>
+          </div>
 
-          {image && (
-            <div className="image-container">
-              <h2>Uploaded Image</h2>
-              <img src={image} alt="Uploaded preview" className="uploaded-image" />
-            </div>
-          )}
-        </div>
-        <button type="submit">Generate Markdown</button>
+          <button type="submit">Generate Markdown</button>
+        </form>
 
         {markdown && (
           <div className="markdown-container">
-            <h2>Generated Markdown</h2>
             <ReactMarkdown>{markdown}</ReactMarkdown>
           </div>
         )}
