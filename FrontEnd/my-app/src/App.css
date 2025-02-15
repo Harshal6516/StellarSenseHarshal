@@ -165,7 +165,7 @@ input:focus {
 
 /* Button */
 button {
-  background: linear-gradient(90deg, #00264d, #004080);
+  background: #414a52;
   color: white;
   border: none;
   padding: 14px;
@@ -182,8 +182,8 @@ button {
 }
 
 button:hover {
-  background: #0080ff;
-  box-shadow: 0 0 15px rgba(0, 128, 255, 0.8);
+  background:linear-gradient(90deg, #00264d, #004080);
+ 
   transform: scale(1.05);
 }
 
