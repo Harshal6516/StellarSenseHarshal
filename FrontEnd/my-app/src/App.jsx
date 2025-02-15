@@ -8,9 +8,23 @@ const App = () => {
     age: "",
     regno: "",
     phone_no: "",
+    gag: "",
+    abc: "",
+    def: "",
+    ghi:"",
+    jkl:"",
+    adn:"",
+    ajdfn:"",
+    ansdjn:"",
+    klko:"",
+    kmksdm:"",
+    dmfk:"",
+    kmdkm:"",
+    
   });
 
   const [markdown, setMarkdown] = useState("");
+  const [image, setImage] = useState(null);
   const [particles, setParticles] = useState(createParticles());
 
   function createParticles() {
@@ -71,8 +85,18 @@ const App = () => {
     }
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
+    }
+  };
+  
   return (
-    <div>
+    
+    <div class="abc">
+      <h1><span id='stellar'>STELLAR</span>SENSE</h1>
       <div className="particles-container">
         {particles.map((particle) => (
           <div
@@ -87,145 +111,45 @@ const App = () => {
             }}
           />
         ))}
+        
       </div>
+      
+      
 
       <div className="content-container">
-        <h1>User Details Form</h1>
-        <form onSubmit={handleSubmit} className="form-container">
-          <div className="grid-container">
-            <div className="inputs-grid">
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter Name"
-                required
-              />
-              <input
-                type="number"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-                placeholder="Enter Age"
-                required
-              />
-              <input
-                type="text"
-                name="regno"
-                value={formData.regno}
-                onChange={handleChange}
-                placeholder="Enter Reg No"
-                required
-              />
-              <input
-                type="text"
-                name="phone_no"
-                value={formData.phone_no}
-                onChange={handleChange}
-                placeholder="Enter Phone No"
-                required
-              />
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter Name"
-                required
-              />
-              <input
-                type="number"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-                placeholder="Enter Age"
-                required
-              />
-              <input
-                type="text"
-                name="regno"
-                value={formData.regno}
-                onChange={handleChange}
-                placeholder="Enter Reg No"
-                required
-              />
-              <input
-                type="text"
-                name="phone_no"
-                value={formData.phone_no}
-                onChange={handleChange}
-                placeholder="Enter Phone No"
-                required
-              />
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter Name"
-                required
-              />
-              <input
-                type="number"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-                placeholder="Enter Age"
-                required
-              />
-              <input
-                type="text"
-                name="regno"
-                value={formData.regno}
-                onChange={handleChange}
-                placeholder="Enter Reg No"
-                required
-              />
-              <input
-                type="text"
-                name="phone_no"
-                value={formData.phone_no}
-                onChange={handleChange}
-                placeholder="Enter Phone No"
-                required
-              />
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter Name"
-                required
-              />
-              <input
-                type="number"
-                name="age"
-                value={formData.age}
-                onChange={handleChange}
-                placeholder="Enter Age"
-                required
-              />
-              <input
-                type="text"
-                name="regno"
-                value={formData.regno}
-                onChange={handleChange}
-                placeholder="Enter Reg No"
-                required
-              />
-              <input
-                type="text"
-                name="phone_no"
-                value={formData.phone_no}
-                onChange={handleChange}
-                placeholder="Enter Phone No"
-                required
-              />
+        <h2>User Details Form</h2>
+        <div className="form-image-container">
+          <form onSubmit={handleSubmit} className="form-container">
+            <div className="grid-container">
+              <div className="inputs-grid">
+                {Object.keys(formData).map((key) => (
+                  <div className="input-field" key={key}>
+                    <label htmlFor={key}>{key.toUpperCase()}</label>
+                    <input
+                      type={key === "age" ? "number" : "text"}
+                      id={key}
+                      name={key}
+                      value={formData[key]}
+                      onChange={handleChange}
+                      placeholder={`Enter ${key}`}
+                      required
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-          <button type="submit">Generate Markdown</button>
-        </form>
+            <input type="file" accept="image/*" onChange={handleImageChange} className="upload-button" />
+            
+          </form>
+
+          {image && (
+            <div className="image-container">
+              <h2>Uploaded Image</h2>
+              <img src={image} alt="Uploaded preview" className="uploaded-image" />
+            </div>
+          )}
+        </div>
+        <button type="submit">Generate Markdown</button>
 
         {markdown && (
           <div className="markdown-container">
