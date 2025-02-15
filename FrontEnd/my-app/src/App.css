@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+  background: #000; /* Pure black space */
+  color: #ffffff;
+  font-family: "Orbitron", sans-serif;
+  display: grid;
+  justify-content:space-around;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Starry animated background */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('./assets/stardust.png') no-repeat center center;
+  background-size: cover; /* Adjusts image size */
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: -1;
+  animation: stars 50s linear infinite;
+}
+
+@keyframes stars {
+  0% { background-position: 0 0; }
+  100% { background-position: 1000px 1000px; }
+}
+
+/* Space container */
+/* .app-container {
+  background: rgba(5, 5, 15, 0.98); 
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(0, 0, 255, 0.3);
+  text-align: center;
+  width: 450px;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+} */
+
+/* Heading */
+h1 {
+  color: #00ccff;
+  text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+  font-size: 26px;
+}
+
+/* Form Styling */
+/* Table Container */
+.grid-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Table Styling */
+.input-table {
+  border-collapse: collapse;
+  width: 60%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Table Cells */
+.input-table td {
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
+/* Input Fields */
+.input-table input {
+  width: 100%;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  outline: none;
+}
+
+.input-table input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input-table input:focus {
+  border-color: #00ccff;
+  box-shadow: 0 0 10px rgba(0, 204, 255, 0.8);
+}
+
+
+/* Button */
+button {
+  background: linear-gradient(90deg, #001f3f, #003366);
+  color: white;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.4s;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(0, 123, 191, 0.5);
+}
+
+button:hover {
+  background: #007bbf;
+  box-shadow: 0 0 15px rgba(0, 123, 191, 0.8);
+  transform: scale(1.05);
+}
+
+/* Markdown Display */
+.markdown-container {
+  display: grid;
+  
+}
+
+/* Glow effect */
+.markdown-container:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* Particle Background Effect */
+.particles-container {
+  position: fixed; /* Ensure it covers the full screen */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0; /* Higher than -1 */
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: top 0.05s linear;
+  width: 4px;
+  height: 4px;
+  opacity: 0.8;
+}
+
+
