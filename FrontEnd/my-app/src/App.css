@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
-  background: #000;
+  background: #011123;
   color: #ffffff;
-  font-family: "Orbitron", sans-serif;
+  font-family: "Montserrat", sans-serif;
   display: grid;
   justify-content: space-around;
   align-items: center;
@@ -36,16 +36,17 @@ body::before {
 
 /* Content Container */
 .content-container {
-  display: grid;
-
+  display: block; /* Change from grid to block */
+  position: absolute;
+  left: 20px; /* Adjust left margin */
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 1;
   padding: 30px;
   border-radius: 15px;
-  text-align: center;
-  width: 90%;
-  max-width: 1200px;
-  margin: 20px auto;
- 
+  text-align: left;
+  width: 50%; /* Reduce size */
+  max-width: 600px; /* Adjust as needed */
 }
 
 /* Heading */
@@ -58,10 +59,11 @@ h1 {
 
 /* Form Container */
 .form-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  justify-content: left;
   gap: 20px;
-  align-items: center;
+  align-items: center;    
+  color: #ffffff;
   width: 100%;
 }
 
@@ -76,6 +78,7 @@ h1 {
   grid-template-columns: repeat(4, 1fr);
   gap: 35px;
   margin: 0 auto;
+  color: #f8f8f8;
   max-width: 1100px;
 }
 
@@ -92,7 +95,7 @@ button {
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 0 0 10px rgba(0, 123, 191, 0.5);
+  box-shadow: 0 0 10px rgba(235, 237, 239, 0.5);
   width: 100%;
   max-width: 300px;
   margin-top: 20px;
@@ -131,7 +134,7 @@ button:hover {
 
 .particle {
   position: absolute;
-  background: white;
+  background: rgba(255, 255, 255, 0.425);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   transition: top 0.05s linear;
@@ -140,14 +143,14 @@ button:hover {
 /* Input Fields */
 input {
   background: rgba(0, 0, 30, 0.8);
-  color: #00ccff;
-  border: 1px solid rgba(0, 204, 255, 0.6);
+  color: #ffffff;
+  border: 1px solid rgba(97, 105, 107, 0.6);
   padding: 12px;
   font-size: 14px;
   border-radius: 8px;
   outline: none;
   transition: 0.3s;
-  box-shadow: 0 0 8px rgba(0, 204, 255, 0.3);
+  box-shadow: 0 0 8px rgba(217, 220, 221, 0.3);
   text-align: center;
   width: 100%;
   max-width: none;
@@ -157,8 +160,8 @@ input {
 /* Input Hover & Focus Effects */
 input:hover,
 input:focus {
-  border-color: #00ccff;
-  box-shadow: 0 0 12px rgba(0, 204, 255, 0.8);
+  border-color: #ffffff;
+  box-shadow: 0 0 12px rgba(168, 206, 215, 0.8);
   transform: scale(1.05);
 }
 
