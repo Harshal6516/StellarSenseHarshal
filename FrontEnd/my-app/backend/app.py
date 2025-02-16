@@ -1,63 +1,59 @@
 from flask import Flask, request, jsonify
 import os
-import cv2  # Example: Using OpenCV for processing
-import torch  # Example: Using PyTorch for an ML model
-from flask_cors import CORS  # Import CORS
+import cv2
+from flask_cors import CORS
+from predictor import predict_galaxy
 
-app = Flask(__name__)  # Only one instance
-CORS(app)  # Enable CORS for all routes
+app = Flask(__name__)
+CORS(app)
 
 # Get the directory where this script is located
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "pypacks")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Create an "img" folder inside the same directory as this Python file
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "img")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the folder exists
-
-@app.route("/upload-image", methods=["POST"])
-def upload_image():
-    if "image" not in request.files:
-        return jsonify({"error": "No image uploaded"}), 400
-    
-    image = request.files["image"]
-    image_path = os.path.join(UPLOAD_FOLDER, image.filename)
-    image.save(image_path)  # Save image in "img" folder
-
-    # Pass image to the model
-    result = process_image(image_path)
-
-    return jsonify({"message": "Image uploaded successfully", "image_path": image_path, "model_result": result})
-
-def process_image(image_path):
-    """ Example: Load image & pass it to a deep learning model """
-    img = cv2.imread(image_path)  # Load image
-    # Example: Convert image to tensor for a PyTorch model
-    tensor_img = torch.tensor(img).float().unsqueeze(0)  # Modify as per your model
-    # Example: Fake model output (Replace with actual model prediction)
-    model_output = {"prediction": "Galaxy Detected", "confidence": 0.95}
-    return model_output
-
-# ✅ New endpoint to generate Markdown from form data
-@app.route("/generate-markdown", methods=["POST"])
-def generate_markdown():
+@app.route("/predict-galaxy", methods=["POST"])
+def process_galaxy_prediction():
     try:
-        data = request.json  # Get JSON data from React frontend
-        if not data:
-            return jsonify({"error": "No data received"}), 400
+        # Get numerical parameters in correct order
+        params = [
+            float(request.form.get('param1', 0)),  # corresponds to 1.2
+            float(request.form.get('param2', 0)),  # corresponds to 2.3
+            float(request.form.get('param3', 0)),  # corresponds to 3.4
+            float(request.form.get('param4', 0)),  # corresponds to 4.5
+            float(request.form.get('param5', 0)),  # corresponds to 5.6
+            float(request.form.get('param6', 0)),  # corresponds to 1.1
+            float(request.form.get('param7', 0)),  # corresponds to 0.9
+            float(request.form.get('param8', 0)),  # corresponds to 0.8
+            float(request.form.get('param9', 0)),  # corresponds to 2.5
+            float(request.form.get('param10', 0))  # corresponds to 5.0
+        ]
         
-        print("Received Data:", data)  # Debugging Log in Flask Console
+        # Save image as image.jpg
+        if "image" in request.files:
+            image = request.files["image"]
+            image_path = os.path.join(UPLOAD_FOLDER, "image.jpg")
+            image.save(image_path)
+            predict_galaxy(*params)
+            
+            result_path = os.path.join(BASE_DIR, "results.md")
+            if not os.path.exists(result_path):
+                return jsonify({"error": "Prediction result not generated"}), 500
+                
+            with open(result_path, 'r') as f:
+                markdown_content = f.read()
+                
+            return jsonify({
+                "message": "Prediction completed successfully",
+                "markdown": markdown_content
+            })
+        else:
+            return jsonify({"error": "No image uploaded"}), 400
 
-        # Convert form data to Markdown format
-        markdown_content = "## Generated Markdown\n\n"
-        for key, value in data.items():
-            markdown_content += f"#: {value}\n\n"
-
-        print("Generated Markdown:", markdown_content)  # Debugging Log in Flask Console
-        return jsonify({"markdown": markdown_content})  # Return Markdown content
-
+    except ValueError as e:
+        return jsonify({"error": f"Invalid numerical value: {str(e)}"}), 400
     except Exception as e:
-        print("Error in /generate-markdown:", str(e))  # Debugging Log in Flask Console
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Request processing failed: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

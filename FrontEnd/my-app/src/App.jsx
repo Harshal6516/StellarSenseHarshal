@@ -4,22 +4,36 @@ import "./App.css";
 
 const App = () => {
   const [formData, setFormData] = useState({
-    U_Filter: "",
-    G_Filter: "",
-    R_Filter: "",
-    I_Filter: "",
-    Z_Filter: "",
-    GR_Color: "",
-    RI_color: "",
-    UG_Color: "",
-    PetroR50_R: "",
-    PetroR90_R: "",
-
+    param1: "",
+    param2: "",
+    param3: "",
+    param4: "",
+    param5: "",
+    param6: "",
+    param7: "",
+    param8: "",
+    param9: "",
+    param10: ""
   });
+
+  const paramLabels = {
+    param1: "U_Filter",
+    param2: "G_Filter",
+    param3: "R_Filter",
+    param4: "I_Filter",
+    param5: "Z_Filter",
+    param6: "GR_Color",
+    param7: "RI_Color",
+    param8: "UG_Color",
+    param9: "PetroR50_R",
+    param10: "PetroR90_R"
+  };
 
   const [particles, setParticles] = useState(createParticles());
   const [markdown, setMarkdown] = useState("");
   const [image, setImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   function createParticles() {
     return Array.from({ length: 50 }, (_, i) => ({
@@ -47,80 +61,59 @@ const App = () => {
   }, []);
 
   const handleChange = (e) => {
+    const value = e.target.value.replace(/[^0-9.-]/g, '');
     setFormData((prevData) => ({
       ...prevData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: value,
     }));
   };
 
-  const handleGenerateMarkdown = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      console.log("Sending data to backend:", formData); // Debugging log
-  
-      const response = await fetch("http://127.0.0.1:5000/generate-markdown", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-  
-      const data = await response.json();
-      console.log("Received response:", data); // Debugging log
-  
-      if (response.ok) {
-        setMarkdown(data.markdown);
-      } else {
-        console.error("Error:", data.error);
-      }
-    } catch (error) {
-      console.error("Request Failed:", error);
-    }
-  };
-  
-  
+    setIsLoading(true);
+    setError(null);
 
-  const fetchMarkdown = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/get-markdown");
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+      const submitFormData = new FormData();
+      
+      // Append parameters in correct order
+      Object.keys(formData).forEach(key => {
+        submitFormData.append(key, formData[key]);
+      });
+
+      if (image) {
+        const response = await fetch(image);
+        const blob = await response.blob();
+        submitFormData.append("image", blob, "image.jpg");
       }
+
+      const response = await fetch("http://127.0.0.1:5000/predict-galaxy", {
+        method: "POST",
+        body: submitFormData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+      }
+
       const data = await response.json();
       setMarkdown(data.markdown);
     } catch (error) {
-      console.error("Error fetching markdown:", error);
+      setError(error.message);
+      console.error("Error processing request:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  
-  const handleImageChange = async (e) => {
+
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
-  
-      // Send image to backend
-      const formData = new FormData();
-      formData.append("image", file);
-  
-      try {
-        const response = await fetch("http://127.0.0.1:5000/upload-image", {
-          method: "POST",
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-  
-        const data = await response.json();
-        console.log("Model Output:", data.model_result); // Debugging
-        alert(`Prediction: ${data.model_result.prediction}, Confidence: ${data.model_result.confidence}`);
-      } catch (error) {
-        console.error("Error uploading image:", error);
-      }
     }
   };
-  
 
   return (
     <div className="abc">
@@ -128,7 +121,6 @@ const App = () => {
         <span id="stellar">STELLAR</span>SENSE
       </h1>
 
-      {/* Particles Background */}
       <div className="particles-container">
         {particles.map((particle) => (
           <div
@@ -145,7 +137,6 @@ const App = () => {
         ))}
       </div>
 
-      {/* Uploaded Image Positioned at Middle Right */}
       {image && (
         <div className="uploaded-image-container">
           <img src={image} alt="Uploaded preview" className="uploaded-image" />
@@ -153,29 +144,45 @@ const App = () => {
       )}
 
       <div className="content-container">
-        <h2>User Details Form</h2>
-        <form onSubmit={handleGenerateMarkdown}>
+        <h2>Galaxy Analysis</h2>
+        <form onSubmit={handleSubmit}>
           <div className="inputs-grid">
             {Object.keys(formData).map((key) => (
               <div key={key} className="input-field">
-                <label htmlFor={key}>{key.toUpperCase()}</label>
+                <label htmlFor={key}>{paramLabels[key]}</label>
                 <input
                   id={key}
                   name={key}
+                  type="number"
+                  step="any"
                   value={formData[key]}
                   onChange={handleChange}
-                  placeholder={`Enter ${key}`}
+                  placeholder="0"
                   required
                 />
               </div>
             ))}
           </div>
           <div className="upload-container">
-            <input type="file" accept="image/*" onChange={handleImageChange} className="upload-button" />
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleImageChange} 
+              className="upload-button"
+              required 
+            />
           </div>
 
-          <button type="submit">Generate Markdown</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Processing..." : "Analyze Galaxy"}
+          </button>
         </form>
+
+        {error && (
+          <div className="error-message">
+            Error: {error}
+          </div>
+        )}
 
         {markdown && (
           <div className="markdown-container">
